@@ -10,7 +10,7 @@ MonocularSlamNode::MonocularSlamNode(ORB_SLAM3::System* pSLAM)
     m_SLAM = pSLAM;
     // std::cout << "slam changed" << std::endl;
     m_image_subscriber = this->create_subscription<ImageMsg>(
-        "camera",
+        "/camera1/image_raw",
         10,
         std::bind(&MonocularSlamNode::GrabImage, this, std::placeholders::_1));
     std::cout << "slam changed" << std::endl;
@@ -38,6 +38,6 @@ void MonocularSlamNode::GrabImage(const ImageMsg::SharedPtr msg)
         return;
     }
 
-    std::cout<<"one frame has been sent"<<std::endl;
+    std::cout<<"one frame has been sent, encoding: " << m_cvImPtr->encoding << ", channels: " << m_cvImPtr->image.channels() << ", type: " << m_cvImPtr->image.type() << std::endl;
     m_SLAM->TrackMonocular(m_cvImPtr->image, Utility::StampToSec(msg->header.stamp));
 }
